@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@if (!Model.Post)
+{
+    @Html.Partial("_Form")
+}
+else
+{
+    @Html.Partial("_ThankYou")
+}

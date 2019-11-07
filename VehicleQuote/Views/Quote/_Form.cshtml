@@ -1,0 +1,43 @@
+﻿@model VehicleQuote.Models.QuoteViewModel
+
+@using (Html.BeginForm("Post", "Quote", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.SelectedVehicleMakeID)
+            @Html.DropDownListFor(m => m.SelectedVehicleMakeID, Model.VehicleMakes, "Select Make", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.SelectedVehicleMakeID, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.SelectedVehicleModelID)
+            @Html.DropDownListFor(m => m.SelectedVehicleModelID, Model.VehicleModels, "Select Model", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.SelectedVehicleModelID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row">
+        <input type="submit" value="Post" class="btn btn-default" />
+    </div>
+}
+
+<script type="text/javascript">
+    var modelSelect = $('#SelectedVehicleModelID'); // cache it
+    $('#SelectedVehicleMakeID').change(function() {
+        var makeID = $(this).val(); // use $(this)
+        modelSelect.empty(); // clear existing options
+        if (!makeID) {
+            modelSelect.append($('<option></option>').val('').text('Select Model'));
+            return; // there is no point making an ajax call so just exit
+        }
+        $.ajax({
+            type: 'GET', // or 'GET' depending on how you have modified the method above
+            url: '@Url.Action("GetVehicleModelsByMakeID", "Quote")',
+            data: {makeID : makeID },
+            success: function (response) {
+                modelSelect.append($('<option></option>').val('').text('Select Model')); // add a default null option
+                $.each(response, function (i, item) {
+                    modelSelect.append($('<option></option>').val(item.ID).text(item.Description));
+                });
+            },
+        });
+    })
+</script>
